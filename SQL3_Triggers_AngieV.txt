@@ -1,0 +1,50 @@
+--Angie Vargas Matarrita
+--SQL 3 Cenfotec
+
+--TRIGGER1 -Crear un trigger sobre empleados que al insertar un empleado
+--se inserte en la tabla planilla con salario en 0.
+
+create or alter trigger tg04
+on empleados
+for insert
+as
+begin
+	 declare @cedula varchar(15);
+	 
+	 select @cedula = cedula 
+	 from inserted;
+	 
+	 insert into planilla values(@cedula,0)			
+END;
+
+--2. Usted debe crear un Trigger sobre la tabla horastrabajadas que cuando se
+--inserte un registro, se calcule cuanto gano y se sume 
+--al sueldo en la planilla.
+create or alter trigger tg05
+on horastrabajadas
+for insert
+as
+begin
+	 declare @cedula bigint;
+	 declare @salarioapagar money;
+	 declare @salarioxhora money;
+	 declare @numerohoras int;
+	 declare @salarioxhoraextra money;
+	 declare @tipo bit;
+	
+
+	select @cedula=cedula, @numerohoras=numerohoras, @tipo=tipo
+	from inserted;
+
+	select @salarioxhora = salarioxhora, @salarioxhoraextra= salarioxhoraextra
+	from empleados
+	where cedula=@cedula
+
+	if @tipo =1
+	set @salarioapagar = @salarioxhora * @numerohoras
+	else 
+	set	@salarioapagar = @salarioxhoraextra * @numerohoras;
+
+	update planilla
+	set salarioapagar = salarioapagar + @salarioapagar
+	where cedula=@cedula;

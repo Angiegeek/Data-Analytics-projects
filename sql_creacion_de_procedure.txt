@@ -1,0 +1,23 @@
+---Angie Vargas Matarrita SQL3
+/*Hacer un internal procedure que revise la tabla articulos y en aquellos
+caso en que existencia sea menor o igual a resurtido,
+inserte ese codigo en una nueva tabla llamada ordenar*/
+
+create or alter procedure revisa_resurtido
+as
+begin
+	Drop table if exists ordenar;
+	CREATE TABLE  ordenar (
+	codigo varchar(20) NOT NULL);
+
+  INSERT INTO ordenar
+	SELECT codigo
+    FROM articulos
+    WHERE existencia <= resurtido;
+end;
+
+select *  from Articulos
+exec revisa_resurtido
+
+
+select * from ordenar
